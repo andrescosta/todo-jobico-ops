@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 5432,
+				"driver": "PostgreSQL",
+				"name": "todo_db",
+				"database": "todo",
+				"username": "postgres",
+				"password": "mysecretpassword"
+			}
+		],
+		"java.configuration.runtimes": []
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "jdk",
+				"request": "launch",
+				"name": "Launch Java App",
+				"mainClass": "${file}"
+			}
+		]
+	}
+}

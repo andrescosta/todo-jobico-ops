@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: todo-web
+  name: todoweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-web
+  template:
+    metadata:
+      labels:
+        app: todo-web
+    spec:
+      containers:
+        - image: coeux/todo-web:latest
+          #livenessProbe:
+          #  exec:
+          #    command:
+          #      - curl -f http://localhost:3000/ || exit 1
+          #  failureThreshold: 2
+          #  periodSeconds: 60
+          #  timeoutSeconds: 10
+          name: todoweb
+          ports:
+            - containerPort: 3000
+              hostPort: 3000
+              protocol: TCP
+      restartPolicy: Always
+

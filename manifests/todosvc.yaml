@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: todosvc
+  name: todosvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todosvc
+  template:
+    metadata:
+      labels:
+        app: todosvc
+    spec:
+      imagePullSecrets:
+        - name: reg-cred-secret
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: devk8s
+          image: reg.jobico.org/todosvc:v3
+          imagePullPolicy: Always
+          name: todosvc
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: todosvc
+  name: todosvc
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: todosvc
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todosvc
+spec:
+  tls:
+    - hosts:
+        - todosvc.jobico.org
+      secretName: certs-secret
+  rules:
+    - host: todosvc.jobico.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todosvc
+                port:
+                  number: 8080

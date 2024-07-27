@@ -1,0 +1,4 @@
+**/01-init-svc.sh text eol=lf
+todo-svc/mvnw text eol=lf
+test/mvnw text eol=lf
+performance/gatling/mvnw text eol=lf

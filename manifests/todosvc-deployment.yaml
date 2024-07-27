@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: todosvc
+  name: todosvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todosvc
+  template:
+    metadata:
+      labels:
+        app: todosvc
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: devk8s
+          image: todosvc:v1
+          name: todosvc
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+      restartPolicy: Always
