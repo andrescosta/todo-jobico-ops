@@ -9,6 +9,7 @@ HELP.md
 **\dist
 tempo-data
 *.bkp
+**/_infra/manifests/deploy.yaml
 ### STS ###
 .apt_generated
 .classpath

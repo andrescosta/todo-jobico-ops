@@ -54,12 +54,15 @@ public class JwtTokenAuthenticationProvider {
         jwtParser = buildJwtParser(new RemoteJwkSigningKeyResolver(getJwksURI()));
     }
 
-    public Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String token) throws Exception {
         Claims claims = jwtParser
                 .parseClaimsJws(token)
                 .getBody();
 
         LinkedTreeMap m = (LinkedTreeMap) claims.get("urn:zitadel:iam:user:metadata");
+        if (m==null) {
+            throw(new Exception("no problem"));
+        }
         String id = (String) m.get("jobico-id");
         var arrs = Base64.getDecoder().decode(id);
         String uuid = new String(java.util.Arrays.copyOfRange(arrs, 1, arrs.length - 1));

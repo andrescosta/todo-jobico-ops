@@ -5,7 +5,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 module.exports = {
     entry: "./src/index.js",
-    mode: "development",
+    mode: "production",
     module: {
         rules: [
             {
@@ -37,9 +37,10 @@ module.exports = {
         port: 3000,
         allowedHosts: [
             'todoweb',
+            'todo.jobico.org'
         ],
         devMiddleware: {
-            publicPath: "https://todoweb/dist/"
+            publicPath: "https://todo.jobico.org/dist/"
         },
         hot: false,
         liveReload: false

@@ -79,15 +79,145 @@ data:
     activity_id)\n    VALUES (v_label_id, v_activity_id)\n    RETURNING id INTO v_label_activity_id;\n\n
     \   UPDATE ACTIVITY\n    SET label_activity_id = v_label_activity_id\n    WHERE
     id = v_activity_id;\n\nEND \\$\\$;\n\nCOMMIT;\n\nEOSQL\n"
-  02-init-keycloak.sh: "#!/bin/bash\nset -e\nexport PGPASSWORD=$POSTGRES_PASSWORD\npsql
-    -v ON_ERROR_STOP=1 --username \"$POSTGRES_USER\" --dbname \"$POSTGRES_DB\" <<-EOSQL\n\tCREATE
-    USER $KC_DB_USERNAME WITH PASSWORD '$KC_DB_PASSWORD';\n\tCREATE DATABASE $KC_DB_URL_DATABASE;\n\tGRANT
-    ALL PRIVILEGES ON DATABASE $KC_DB_URL_DATABASE TO $KC_DB_USERNAME;\n    \\connect
-    $KC_DB_URL_DATABASE $POSTGRES_USER\n    GRANT ALL ON SCHEMA public TO $KC_DB_USERNAME;\nEOSQL\n"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-11T15:33:53Z"
   name: db-sh
-  namespace: default
-  resourceVersion: "18229"
-  uid: ad7cae42-0128-4a59-aaf1-3da4e409dd5f
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: todosvc
+  name: todosvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todosvc
+  template:
+    metadata:
+      labels:
+        app: todosvc
+    spec:
+      imagePullSecrets:
+        - name: reg-cred-secret
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: devk8s
+            - name: PYROSCOPE_AGENT_ENABLED
+              value: "false"
+          image: reg.jobico.org/todosvc:latest
+          imagePullPolicy: Always
+          name: todosvc
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todosvc
+spec:
+  tls:
+    - hosts:
+        - todosvc.jobico.org
+      secretName: certs-secret
+  rules:
+    - host: todosvc.jobico.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todosvc
+                port:
+                  number: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: todosvc
+  name: todosvc
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: todosvc
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: todo-web
+  name: todoweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-web
+  template:
+    metadata:
+      labels:
+        app: todo-web
+    spec:
+      imagePullSecrets:
+        - name: reg-cred-secret
+      containers:
+        - image: reg.jobico.org/todoweb:latest
+          #livenessProbe:
+          #  exec:
+          #    command:
+          #      - curl -f http://localhost:3000/ || exit 1
+          #  failureThreshold: 2
+          #  periodSeconds: 60
+          #  timeoutSeconds: 10
+          name: todoweb
+          ports:
+            - containerPort: 3000
+              hostPort: 3000
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todoweb
+spec:
+  tls:
+    - hosts:
+        - todo.jobico.org
+      secretName: certs-secret
+  rules:
+    - host: todo.jobico.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todoweb
+                port:
+                  number: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: todo-web
+  name: todoweb
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: todo-web
+  type: LoadBalancer

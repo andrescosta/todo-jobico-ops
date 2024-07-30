@@ -5,10 +5,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - todosvc
-      secretName: todosvc-cert
+        - todosvc.jobico.org
+      secretName: certs-secret
   rules:
-    - host: todosvc
+    - host: todosvc.jobico.org
       http:
         paths:
           - path: /

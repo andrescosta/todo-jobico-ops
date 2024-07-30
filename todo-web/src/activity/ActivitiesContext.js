@@ -31,7 +31,7 @@ export const Events = {
   UPDATED: Symbol("updated"),
   DELETED: Symbol("deleted"),
   FILTEREDBYTYPE: Symbol("filteredbytype"),
-  FILTERRESETED: Symbol("notfiltered"),
+  FILTERRESET: Symbol("notfiltered"),
 };
 
 function activitiesReducer(activities, action) {
@@ -44,7 +44,6 @@ function activitiesReducer(activities, action) {
         ok: true,
         data: [...activities.data, action.data],
       };
-      console.log(ret);
       return ret;
     }
     case Events.UPDATED: {
@@ -71,7 +70,7 @@ function activitiesReducer(activities, action) {
         })),
       };
     }
-    case Events.FILTERRESETED: {
+    case Events.FILTERRESET: {
       return {
         ok: true,
         data: activities.data.map((obj) => ({ ...obj, show: true })),

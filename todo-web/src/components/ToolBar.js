@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getActivities } from "../activity/ActivitiesService";
 import { useActivitiesDispatch, Events } from "../activity/ActivitiesContext"
 import ActivityForm from "../activity/ActivityForm";
 import Modal from "../common/Modal"
@@ -16,10 +17,13 @@ export default function ToolBar() {
         toggleSelectedOption(type)
     }
     async function onClickHome() {
-        dispatch({ type: Events.FILTERRESETED });
+        dispatch({ type: Events.FILTERRESET });
         toggleSelectedOption("HOME")
     }
-
+    async function refresh(){
+        const data = await getActivities();
+        dispatch({ type: Events.LOADED, result: data });
+    }
     function selectedClass(type) {
         if (selectedOption === type) {
             return "w3-dark-grey";
@@ -44,7 +48,7 @@ export default function ToolBar() {
                 <a href="#" onClick={() => onClickFilterByType("LINK")} className={"w3-bar-item w3-button " + selectedClass("LINK")}><i className="fa fa-link"></i></a>
                 <a href="#" onClick={() => onClickFilterByType("BOOK")} className={"w3-bar-item w3-button " + selectedClass("BOOK")}><i className="fa fa-book"></i></a>
                 <a href="#" onClick={() => onClickFilterByType("MOVIE")} className={"w3-bar-item w3-button " + selectedClass("MOVIE")}><i className="fa fa-file-movie-o"></i></a>
-                <a href="#" onClick={() => Main()} className="w3-bar-item w3-button w3-black" style={{ marginLeft: 5 + 'px' }}><i
+                <a href="#" onClick={() => refresh()} className="w3-bar-item w3-button w3-black" style={{ marginLeft: 5 + 'px' }}><i
                     className="fa fa-refresh"></i></a>
                 <a href="#" className="w3-bar-item w3-button w3-black" style={{ marginLeft: 5 + 'px' }}><i
                     className="fa fa-search"></i></a>

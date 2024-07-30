@@ -232,7 +232,11 @@ public class AcitivityAPIDocsTests {
         var u = new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
         when(authProvider.validateRequestToken(Mockito.anyString())).thenReturn(true);
-        when(authProvider.getAuthentication(Mockito.anyString())).thenReturn(u);
+        try {
+                when(authProvider.getAuthentication(Mockito.anyString())).thenReturn(u);
+        } catch (Exception e) {
+                e.printStackTrace();
+        }
         when(authProvider.getAuthToken(Mockito.any(HttpServletRequest.class))).thenReturn("");
         when(authProvider.isAuthTokenPresent(Mockito.any(HttpServletRequest.class))).thenReturn(true);
 

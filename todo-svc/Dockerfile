@@ -28,4 +28,4 @@ ENV PYROSCOPE_UPLOAD_INTERVAL=10s
 ENV PYROSCOPE_LOG_LEVEL=info
 ENV PYROSCOPE_SERVER_ADDRESS=http://host.docker.internal:4040
 
-ENTRYPOINT ["java","-javaagent:app/lib/agent-0.11.1.jar","-cp","app:app/lib/*","com.coeux.todo.TodoApplication"]
+ENTRYPOINT ["java","-javaagent:app/lib/agent-0.14.0.jar","-cp","app:app/lib/*","com.coeux.todo.TodoApplication"]

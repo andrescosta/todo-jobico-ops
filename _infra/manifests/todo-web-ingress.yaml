@@ -3,13 +3,12 @@ kind: Ingress
 metadata:
   name: todoweb
 spec:
-  ingressClassName: nginx
   tls:
     - hosts:
-        - todoweb
-      secretName: todoweb-cert
+        - todo.jobico.org
+      secretName: certs-secret
   rules:
-    - host: todoweb
+    - host: todo.jobico.org
       http:
         paths:
           - path: /

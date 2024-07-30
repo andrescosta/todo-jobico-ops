@@ -14,8 +14,10 @@ spec:
       labels:
         app: todo-web
     spec:
+      imagePullSecrets:
+        - name: reg-cred-secret
       containers:
-        - image: coeux/todo-web:latest
+        - image: reg.jobico.org/todoweb:latest
           #livenessProbe:
           #  exec:
           #    command:
@@ -29,4 +31,3 @@ spec:
               hostPort: 3000
               protocol: TCP
       restartPolicy: Always
-

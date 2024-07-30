@@ -14,11 +14,16 @@ spec:
       labels:
         app: todosvc
     spec:
+      imagePullSecrets:
+        - name: reg-cred-secret
       containers:
         - env:
             - name: SPRING_PROFILES_ACTIVE
               value: devk8s
-          image: todosvc:v1
+            - name: PYROSCOPE_AGENT_ENABLED
+              value: "false"
+          image: reg.jobico.org/todosvc:latest
+          imagePullPolicy: Always
           name: todosvc
           ports:
             - containerPort: 8080
