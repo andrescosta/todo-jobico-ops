@@ -1,9 +1,8 @@
-key_path=~/Downloads/278151371365024071.json
+key_path=~/Downloads/278299716364534279.json
 
 go install github.com/zitadel/zitadel-tools@latest
 
 assertion=$(zitadel-tools key2jwt --audience https://id.jobico.org --key $key_path)
-
 data_assertion="assertion=$assertion"
 
 token_response=$(curl -s --request POST \
@@ -14,7 +13,7 @@ token_response=$(curl -s --request POST \
     --data "$data_assertion")
 
 access_token=$(echo "$token_response" | jq -r '.access_token')
-
+echo "accesstoken: $access_token"
 header_bearer="Bearer $access_token"
 
 json_response=$(curl -s -L 'https://id.jobico.org/management/v1/projects' \
@@ -67,8 +66,8 @@ json_response=$(curl -s -L 'https://id.jobico.org/management/v1/actions' \
 -H 'Accept: application/json' \
 -H "Authorization: $header_bearer" \
 -d '{
-  "name": "preUserCreationJobico9",
-  "script": "let uuidlib = require(\"zitadel/uuid\")\nfunction preUserCreationJobico9(ctx, api) {\n  api.v1.user.appendMetadata('jobico-id', uuidlib.v4());\n  api.setEmailVerified(true)\n}",
+  "name": "preUserCreationJobico",
+  "script": "let uuidlib = require(\"zitadel/uuid\")\nfunction preUserCreationJobico(ctx, api) {\n  api.v1.user.appendMetadata(\"jobico-id\", uuidlib.v4());\n  api.setEmailVerified(true)\n}",
   "timeout": "10s",
   "allowedToFail": true
 }')

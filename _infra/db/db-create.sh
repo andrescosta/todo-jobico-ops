@@ -4,7 +4,7 @@ POSTGRES_SRV=db.jobico.org
 export PGPASSWORD=postgres
 APP_DB_PASS=todo
 APP_DB_USER=todo
-APP_DB_NAME=todo1
+APP_DB_NAME=todo
 
 psql -h "$POSTGRES_SRV" -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
   CREATE USER $APP_DB_USER WITH PASSWORD '$APP_DB_PASS';
