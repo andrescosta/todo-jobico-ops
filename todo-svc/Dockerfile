@@ -26,6 +26,6 @@ ENV PYROSCOPE_PROFILER_LOCK=1
 ENV PYROSCOPE_PROFILER_ALLOC=100k
 ENV PYROSCOPE_UPLOAD_INTERVAL=10s
 ENV PYROSCOPE_LOG_LEVEL=info
-ENV PYROSCOPE_SERVER_ADDRESS=http://host.docker.internal:4040
+ENV PYROSCOPE_SERVER_ADDRESS=http://pyroscope.obs.svc.cluster.local:4040
 
-ENTRYPOINT ["java","-javaagent:app/lib/agent-0.14.0.jar","-cp","app:app/lib/*","com.coeux.todo.TodoApplication"]
+ENTRYPOINT ["java","-javaagent:app/lib/agent-0.14.0.jar","-Xlog:jni+resolve=off","-cp","app:app/lib/*","com.coeux.todo.TodoApplication"]
