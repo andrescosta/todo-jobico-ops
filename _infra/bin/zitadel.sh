@@ -1,4 +1,4 @@
-key_path=~/Downloads/278299716364534279.json
+key_path=../id/key.json
 
 go install github.com/zitadel/zitadel-tools@latest
 
@@ -13,7 +13,6 @@ token_response=$(curl -s --request POST \
     --data "$data_assertion")
 
 access_token=$(echo "$token_response" | jq -r '.access_token')
-echo "accesstoken: $access_token"
 header_bearer="Bearer $access_token"
 
 json_response=$(curl -s -L 'https://id.jobico.org/management/v1/projects' \
@@ -27,12 +26,12 @@ json_response=$(curl -s -L 'https://id.jobico.org/management/v1/projects' \
 proj_id=$(echo "$json_response" | jq -r '.id')
 url="https://id.jobico.org/management/v1/projects/$proj_id/apps/oidc"
 
-curl -s -L "$url" \
+json_response=$(curl -s -L "$url" \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
 -H "Authorization: $header_bearer" \
 -d '{
-    "name": "todo project",
+    "name": "Todo App",
     "redirectUris": [
         "http://localhost:3000/callback",
         "http://localhost:3000",
@@ -59,7 +58,10 @@ curl -s -L "$url" \
     "accessTokenRoleAssertion": true,
     "idTokenUserinfoAssertion": true,
     "clockSkew": "0s"
-}'
+}')
+
+clientId=$(echo "$json_response" | jq '.clientId')
+echo "The Client Id is: $clientId"
 
 json_response=$(curl -s -L 'https://id.jobico.org/management/v1/actions' \
 -H 'Content-Type: application/json' \
@@ -74,8 +76,8 @@ json_response=$(curl -s -L 'https://id.jobico.org/management/v1/actions' \
 
 id=$(echo "$json_response" | jq -r '.id')
 json_payload="{\"actionIds\": [\"$id\"]}"
-curl -s -L 'https://id.jobico.org/management/v1/flows/3/trigger/2' \
+json_response=$(curl -s -L 'https://id.jobico.org/management/v1/flows/3/trigger/2' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
 -H "Authorization: $header_bearer" \
--d "$json_payload"
+-d "$json_payload")

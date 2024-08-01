@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: todosvc
+      annotations:
+        jobico-ver: "{version}"
     spec:
       imagePullSecrets:
         - name: reg-cred-secret
@@ -29,4 +31,5 @@ spec:
             - containerPort: 8080
               hostPort: 8080
               protocol: TCP
+              name: svc
       restartPolicy: Always
