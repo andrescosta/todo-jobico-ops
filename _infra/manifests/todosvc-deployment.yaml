@@ -40,6 +40,8 @@ spec:
               value: "10s"
             - name: PYROSCOPE_LOG_LEVEL
               value: "info"
+            - name: PYROSCOPE_LABELS
+              value: "todo-svc.jobico.org"
             - name: PYROSCOPE_SERVER_ADDRESS
               value: "http://pyroscope.obs.svc.cluster.local:4040"
           image: reg.jobico.org/todosvc:latest
