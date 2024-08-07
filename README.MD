@@ -67,7 +67,7 @@ $ ./setup.sh # This step create the database and configure the application on Zi
 
 The output of the previous step is the Cliend ID for our app which must be configured in **todo-web/src/index.js**
 
-9. Deploy the application the application
+9. Deploy the application on Kubernetes
 
 ```bash
 $ ./deploy.sh # From todo-jobico-cloud/_infra/bin
