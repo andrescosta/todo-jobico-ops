@@ -1,5 +1,3 @@
-# TODO Web App Documentation
-
 ## Introduction
 
 This documentation provides detailed instructions for setting up, configuring, and deploying the TODO web app on the Jobico Cloud platform. The TODO web app is an educational project demonstrating a full-stack implementation with the following components:
