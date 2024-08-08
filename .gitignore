@@ -10,7 +10,7 @@ HELP.md
 **/id/*.json
 tempo-data
 *.bkp
-**/_infra/manifests/deploy.yaml
+_infra/manifests/deploy.yaml
 ### STS ###
 .apt_generated
 .classpath
