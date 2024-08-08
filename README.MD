@@ -1,6 +1,8 @@
 ## Introduction
 
-This documentation provides detailed instructions for setting up, configuring, and deploying the TODO web app on the Jobico Cloud platform. The TODO web app is an educational project demonstrating a full-stack implementation with the following components:
+This documentation provides detailed instructions for setting up, configuring, and deploying the TODO web app on the Jobico Cloud platform. 
+
+### Stack
 
 - **Frontend**: React
 - **Backend**: Java 21 and Spring Boot
@@ -12,15 +14,6 @@ This documentation provides detailed instructions for setting up, configuring, a
 ### Jobico Cloud Platform
 
 Jobico Cloud is an Kubernetes distribution that includes several components pre-configured for ease of use. It allows developers to quickly deploy and manage applications without extensive setup.
-
-### Key Features
-
-- **Comprehensive Stack**: Integrates a full-stack application with frontend, backend, and database components.
-- **Pre-configured Kubernetes**: Simplifies deployment and management of containerized applications.
-- **Built-in Observability**: Provides monitoring and logging through the Grafana stack for better visibility into application performance.
-- **Secure Authentication**: Uses Zitadel for managing authentication and authorization.
-- **Scalability**: Leverages Kubernetes to ensure the application can scale based on demand.
-- **Educational Value**: Serves as a learning resource for understanding full-stack development and Kubernetes deployment.
 
 # Getting Started
 
