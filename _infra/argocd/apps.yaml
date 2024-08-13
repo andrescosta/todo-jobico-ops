@@ -10,7 +10,7 @@ spec:
   source:
     path: ''
     repoURL: https://andrescosta.github.io/todo-charts
-    targetRevision: 0.1.0
+    targetRevision: '*' 
     chart: todo-svc-jobico
   sources: []
   project: default
@@ -27,7 +27,7 @@ spec:
   source:
     path: ''
     repoURL: https://andrescosta.github.io/todo-charts
-    targetRevision: 0.2.0
+    targetRevision: '*'
     chart: todo-web-jobico
   sources: []
   project: default
