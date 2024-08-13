@@ -4,7 +4,7 @@ This documentation provides detailed instructions for setting up, configuring, a
 
 ### Stack
 
-- ***Frontend**: React
+- **Frontend**: React
 - **Backend**: Java 21 and Spring Boot
 - **Kubernetes**: Deployment and orchestration
 - **Observability**: Grafana stack
