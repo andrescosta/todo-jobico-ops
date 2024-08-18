@@ -6,7 +6,7 @@ export default function SideMenu({ menuShown }) {
         <>
             <div className="w3-sidebar w3-bar-block w3-dark-grey w3-animate-left" id="mySidebar"><br></br>
                 <div className="w3-container">
-                    <h5>Menu 657</h5>
+                    <h5>Menu 647</h5>
                 </div>
                 <div className="w3-bar-block">
                     <a href="#" className="w3-bar-item w3-button w3-padding w3-blue"><i className="fa fa-users fa-fw"></i>
