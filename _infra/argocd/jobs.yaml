@@ -129,7 +129,7 @@ spec:
           - --git-user=builder
           - --git-email=builder@git
           - --frequency=30
-          - --token-file=/script/token_git_hub.private
+          - --token-file=/token/token_git_hub.private
           - --verbose
           volumeMounts:
             - name: script
