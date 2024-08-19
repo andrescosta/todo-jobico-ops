@@ -10,6 +10,7 @@ HELP.md
 **/id/*.json
 tempo-data
 *.bkp
+*.private
 _infra/manifests/deploy.yaml
 ### STS ###
 .apt_generated
