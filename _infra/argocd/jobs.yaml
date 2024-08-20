@@ -56,6 +56,7 @@ spec:
           - --git-email=builder@git
           - --frequency=30
           - --token-file=/token/token_git_hub.private
+          - --first-build
           - --verbose
           volumeMounts:
           - name: builder-vol
@@ -130,6 +131,7 @@ spec:
           - --git-email=builder@git
           - --frequency=30
           - --token-file=/token/token_git_hub.private
+          - --first-build
           - --verbose
           volumeMounts:
             - name: script
