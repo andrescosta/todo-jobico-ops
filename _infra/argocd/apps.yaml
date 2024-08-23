@@ -29,7 +29,6 @@ spec:
   source:
     path: ''
     repoURL: https://andrescosta.github.io/todo-charts
-      #targetRevision: '>=0.4.0' 
     targetRevision: '*' 
     chart: todo-web-jobico
   sources: []
