@@ -21,7 +21,7 @@ export default function TopBar({ toggleMenu, menuShown }) {
           href="#"
           className="w3-bar-item w3-button w3-right w3-tooltip"
           onClick={() => auth.signoutRedirect()}
-          title={"Bye " + auth.user?.profile.email}
+          title={"BBye " + auth.user?.profile.email}
         >
           <i className="fa fa-user-circle-o"> </i>{" "}
         </button>

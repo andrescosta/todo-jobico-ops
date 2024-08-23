@@ -16,7 +16,7 @@ const onSigninCallback = (_user) => {
 
 const oidcConfig = {
   authority: "https://id.jobico.org/",
-  client_id: "279592422315458835@todo_for_jobico_cloud",
+  client_id: "281736658666193184@todo_for_jobico_cloud",
   redirect_uri: "https://todo.jobico.org",
   onSigninCallback,
   scope: "openid email urn:zitadel:iam:user:metadata",
