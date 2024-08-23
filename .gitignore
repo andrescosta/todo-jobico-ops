@@ -1,4 +1,5 @@
 HELP.md
+*.tgz
 **/target/
 **/backup/
 *.bak
