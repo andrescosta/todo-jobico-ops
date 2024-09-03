@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: trigger-check
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: trigger-check
+            image: curlimages/curl
+            args: ["curl", "-X", "POST", "--data", '{"repository":"https://github.com/andrescosta/todo-jobico-cloud"}', "el-check-and-trigger-build-listener.default.svc.cluster.local:8080"]
+          restartPolicy: Never

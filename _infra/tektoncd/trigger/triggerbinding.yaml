@@ -1,0 +1,8 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: check-and-trigger-build-binding
+spec:
+  params:
+    - name: git-url
+      value: https://github.com/andrescosta/todo-jobico-cloud

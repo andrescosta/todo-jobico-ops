@@ -1,0 +1,94 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: monorepo-pipeline-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: main
+    - name: gitrepositoryurl
+      description: The git repository url
+    - name: java-app-dir
+      description: The directory containing the Java application
+    - name: react-app-dir
+      description: The directory containing the React application
+    - name: java-image-name
+      description: Name for the Java application image
+    - name: react-image-name
+      description: Name for the React application image
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: monorepo-pipeline-run-
+      spec:
+        pipelineRef:
+          name: build-monorepo-apps
+        workspaces:
+          - name: shared-workspace
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
+          - name: my-secret-ws
+            secret:
+              secretName: my-secret
+        params:
+          - name: repo-url
+            value: $(tt.params.gitrepositoryurl)
+          - name: repo-revision
+            value: $(tt.params.gitrevision)
+          - name: java-app-dir
+            value: $(tt.params.java-app-dir)
+          - name: react-app-dir
+            value: $(tt.params.react-app-dir)
+          - name: java-image-name
+            value: $(tt.params.java-image-name)
+          - name: react-image-name
+            value: $(tt.params.react-image-name)
+
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: monorepo-pipeline-binding
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: gitrepositoryurl
+      value: $(body.repository.url)
+    - name: java-app-dir
+      value: $(body.java_dir)
+    - name: react-app-dir
+      value: $(body.react_dir)
+    - name: java-image-name
+      value: $(body.java_image_name)
+    - name: react-image-name
+      value: $(body.react_image_name)
+
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: monorepo-pipeline-trigger
+spec:
+  bindings:
+    - ref: monorepo-pipeline-binding
+  template:
+    ref: monorepo-pipeline-template
+
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: monorepo-pipeline-listener
+spec:
+  triggers:
+    - triggerRef: monorepo-pipeline-trigger
+  serviceAccountName: tekton-sa

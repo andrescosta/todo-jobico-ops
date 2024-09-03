@@ -1,0 +1,53 @@
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: my-configmap
+  data: {hash:""}
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: check-and-trigger-build
+spec:
+  params:
+    - name: git-url
+      type: string
+      description: The Git repository URL
+  workspaces:
+    - name: output
+  steps:
+    - name: get-remote-hash
+      image: alpine/git
+      script: |
+        git ls-remote $(params.git-url) HEAD | awk '{print $1}' > /workspace/output/last-commit-hash
+    - name: get-configmap-hash
+      image: bitnami/kubectl
+      script: |
+        kubectl get configmap my-configmap -o jsonpath='{.data.hash}' > /workspace/output/configmap-hash
+        kubectl patch configmap my-configmap -p "{\"data\":{\"hash\":\"$(cat /workspace/output/last-commit-hash)\"}}"
+    - name: compare-hashes
+      image: curlimages/curl:latest
+      script: |
+        #!/bin/sh
+        if [ "$(cat /workspace/output/last-commit-hash)" != "$(cat /workspace/output/configmap-hash)" ]; then
+          curl -X POST \
+            el-monorepo-pipeline-listener.default.svc.cluster.local:8080 \
+              -H 'Content-Type: application/json' \
+              -d '{
+                "head_commit": {
+                  "id": "main"
+                },
+                "repository": {
+                  "url": "https://github.com/andrescosta/todo-jobico-cloud.git"
+                },
+                "java_dir": "todo-svc",
+                "react_dir": "todo-web",
+                "java_image_name": "reg.jobico.org/todo-svc:latest",
+                "react_image_name": "reg.jobico.org/todo-web:latest"
+              }'
+          echo "Hashes are different. Triggering build pipeline."
+        else
+          echo "Hashes are the same. No build triggered."
+        fi
+
+#/usr/local/bin/tkn pipeline start build-pipeline -p git-url=$(params.git-url)

@@ -1,0 +1,23 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: check-and-trigger-build-template
+spec:
+  params:
+    - name: git-url
+      description: The Git repository URL
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: check-and-trigger-build-run-
+      spec:
+        serviceAccountName: tekton-sa
+        taskRef:
+          name: check-and-trigger-build
+        params:
+          - name: git-url
+            value: $(tt.params.git-url)
+        workspaces:
+          - name: output
+            emptyDir: {}

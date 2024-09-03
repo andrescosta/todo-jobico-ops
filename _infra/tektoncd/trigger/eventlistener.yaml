@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: check-and-trigger-build-listener
+spec:
+  triggers:
+    - name: check-and-trigger-build-trigger
+      bindings:
+        - ref: check-and-trigger-build-binding
+      template:
+        ref: check-and-trigger-build-template
+  serviceAccountName: tekton-sa
