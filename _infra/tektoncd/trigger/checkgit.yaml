@@ -10,44 +10,51 @@ metadata:
   name: check-and-trigger-build
 spec:
   params:
-    - name: git-url
+    - name: repo-revision
       type: string
-      description: The Git repository URL
+      description: The git revision to checkout.
   workspaces:
     - name: output
   steps:
     - name: get-remote-hash
       image: alpine/git
       script: |
-        git ls-remote $(params.git-url) HEAD | awk '{print $1}' > /workspace/output/last-commit-hash
-    - name: get-configmap-hash
-      image: bitnami/kubectl
-      script: |
-        kubectl get configmap my-configmap -o jsonpath='{.data.hash}' > /workspace/output/configmap-hash
-        kubectl patch configmap my-configmap -p "{\"data\":{\"hash\":\"$(cat /workspace/output/last-commit-hash)\"}}"
+        git ls-remote https://github.com/andrescosta/todo-jobico-cloud $(params.repo-revision) | awk '{print $1}' > /workspace/output/last-commit-hash
     - name: compare-hashes
-      image: curlimages/curl:latest
+      image: bitnami/kubectl:latest
       script: |
         #!/bin/sh
-        if [ "$(cat /workspace/output/last-commit-hash)" != "$(cat /workspace/output/configmap-hash)" ]; then
-          curl -X POST \
-            el-monorepo-pipeline-listener.default.svc.cluster.local:8080 \
-              -H 'Content-Type: application/json' \
-              -d '{
-                "head_commit": {
-                  "id": "main"
-                },
-                "repository": {
-                  "url": "https://github.com/andrescosta/todo-jobico-cloud.git"
-                },
-                "java_dir": "todo-svc",
-                "react_dir": "todo-web",
-                "java_image_name": "reg.jobico.org/todo-svc:latest",
-                "react_image_name": "reg.jobico.org/todo-web:latest"
-              }'
-          echo "Hashes are different. Triggering build pipeline."
-        else
-          echo "Hashes are the same. No build triggered."
+        
+        current_hash=$(kubectl get configmap my-configmap -o jsonpath='{.data.hash}')
+        last_hash=$(cat /workspace/output/last-commit-hash)
+        
+        if [ "$current_hash" != "$last_hash" ]; then
+        
+          kubectl patch configmap my-configmap -p "{\"data\":{\"hash\":\"$last_hash\"}}"
+        
+          kubectl create -f - <<EOF
+        apiVersion: tekton.dev/v1beta1
+        kind: PipelineRun
+        metadata:
+          generateName: monorepo-pipeline-run-
+        spec:
+          pipelineRef:
+            name: build-monorepo-apps
+          workspaces:
+            - name: shared-workspace
+              volumeClaimTemplate:
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 1Gi
+            - name: my-secret-ws
+              secret:
+                secretName: my-secret
+          params:
+          - name: repo-revision
+            value: "$(params.repo-revision)"
+        EOF
+        
         fi
-
-#/usr/local/bin/tkn pipeline start build-pipeline -p git-url=$(params.git-url)

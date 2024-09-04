@@ -7,24 +7,9 @@ spec:
     - name: shared-workspace
     - name: my-secret-ws
   params:
-    - name: repo-url
-      type: string
-      description: The git repository URL to clone from.
     - name: repo-revision
       type: string
       description: The git revision to checkout.
-    - name: java-app-dir
-      type: string
-      description: The directory containing the Java application.
-    - name: react-app-dir
-      type: string
-      description: The directory containing the React application.
-    - name: java-image-name
-      type: string
-      description: Name for the Java application image
-    - name: react-image-name
-      type: string
-      description: Name for the React application image
   tasks:
     - name: fetch-repo
       taskRef:
@@ -34,46 +19,44 @@ spec:
           workspace: shared-workspace
       params:
         - name: url
-          value: $(params.repo-url)
+          value: https://github.com/andrescosta/todo-jobico-cloud
         - name: revision
           value: $(params.repo-revision)
-
-    - name: build-java-image
+    - name: build-image-todosvc
       taskRef:
         name: buildah
       runAfter:
         - fetch-repo
+      params:
+      - name: CONTEXT
+        value: todo-svc
+      - name: DOCKERFILE
+        value: todo-svc/Dockerfile
+      - name: IMAGE
+        value: reg.jobico.org/todo-svc
+      - name: TLSVERIFY
+        value: false
       workspaces:
-        - name: source
+        - name: source  
           workspace: shared-workspace
         - name: dockerconfig
           workspace: my-secret-ws
-      params:
-        - name: CONTEXT
-          value: $(params.java-app-dir)
-        - name: DOCKERFILE
-          value: $(params.java-app-dir)/Dockerfile
-        - name: IMAGE
-          value: $(params.java-image-name)
-        - name: TLSVERIFY
-          value: false
-
-    - name: build-react-image
+    - name: build-image-todoweb
       taskRef:
         name: buildah
       runAfter:
         - fetch-repo
+      params:
+      - name: CONTEXT
+        value: todo-web
+      - name: DOCKERFILE
+        value: todo-web/Dockerfile
+      - name: IMAGE
+        value: reg.jobico.org/todo-web
+      - name: TLSVERIFY
+        value: false
       workspaces:
-        - name: source
+        - name: source  
           workspace: shared-workspace
         - name: dockerconfig
           workspace: my-secret-ws
-      params:
-        - name: CONTEXT
-          value: $(params.react-app-dir)
-        - name: DOCKERFILE
-          value: $(params.react-app-dir)/Dockerfile
-        - name: IMAGE
-          value: $(params.react-image-name)
-        - name: TLSVERIFY
-          value: false

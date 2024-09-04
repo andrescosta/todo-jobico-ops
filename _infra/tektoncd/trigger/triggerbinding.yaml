@@ -4,5 +4,5 @@ metadata:
   name: check-and-trigger-build-binding
 spec:
   params:
-    - name: git-url
-      value: https://github.com/andrescosta/todo-jobico-cloud
+    - name: repo-revision
+      value: $(body.repo-revision)

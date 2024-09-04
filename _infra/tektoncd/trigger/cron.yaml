@@ -9,7 +9,16 @@ spec:
       template:
         spec:
           containers:
-          - name: trigger-check
-            image: curlimages/curl
-            args: ["curl", "-X", "POST", "--data", '{"repository":"https://github.com/andrescosta/todo-jobico-cloud"}', "el-check-and-trigger-build-listener.default.svc.cluster.local:8080"]
+          - name: curl
+            image: curlimages/curl:7.82.0
+            command:
+            - /bin/sh
+            - -c
+            - |
+              curl -X POST \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "repo-revision": "main"
+                }' \
+                el-check-and-trigger-build-listener.default.svc.cluster.local:8080
           restartPolicy: Never

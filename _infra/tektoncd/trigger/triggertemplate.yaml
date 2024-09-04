@@ -4,8 +4,12 @@ metadata:
   name: check-and-trigger-build-template
 spec:
   params:
-    - name: git-url
-      description: The Git repository URL
+    - name: repo-url
+      description: The git repository URL to clone from.
+    - name: repo-revision
+      description: The git revision to checkout.
+    - name: resources
+      description: The directories containing the code to build.
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: TaskRun
@@ -16,8 +20,8 @@ spec:
         taskRef:
           name: check-and-trigger-build
         params:
-          - name: git-url
-            value: $(tt.params.git-url)
+          - name: repo-revision
+            value: $(tt.params.repo-revision)
         workspaces:
           - name: output
             emptyDir: {}
