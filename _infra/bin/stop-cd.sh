@@ -1,1 +1,1 @@
-kubectl patch cronjob hello -p '{"spec": {"suspend": true}}'
+kubectl patch cronjob trigger-check -p '{"spec": {"suspend": true}}'
