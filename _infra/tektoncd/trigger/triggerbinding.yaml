@@ -1,8 +1,0 @@
-apiVersion: triggers.tekton.dev/v1beta1
-kind: TriggerBinding
-metadata:
-  name: check-and-trigger-build-binding
-spec:
-  params:
-    - name: repo-revision
-      value: $(body.repo-revision)

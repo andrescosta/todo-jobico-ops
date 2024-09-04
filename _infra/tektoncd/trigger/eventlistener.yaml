@@ -1,4 +1,41 @@
 apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: check-and-trigger-build-template
+spec:
+  params:
+    - name: repo-url
+      description: The git repository URL to clone from.
+    - name: repo-revision
+      description: The git revision to checkout.
+    - name: resources
+      description: The directories containing the code to build.
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: check-and-trigger-build-run-
+      spec:
+        serviceAccountName: tekton-sa
+        taskRef:
+          name: check-and-trigger-build
+        params:
+          - name: repo-revision
+            value: $(tt.params.repo-revision)
+        workspaces:
+          - name: output
+            emptyDir: {}
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: check-and-trigger-build-binding
+spec:
+  params:
+    - name: repo-revision
+      value: $(body.repo-revision)
+---
+apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: check-and-trigger-build-listener
