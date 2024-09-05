@@ -53,7 +53,7 @@ spec:
       - name: DOCKERFILE
         value: app/todo-svc/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todosvc:latest
+        value: reg.jobico.org/todosvc:$(params.repo-revision)
       - name: TLSVERIFY
         value: false
       workspaces:
@@ -72,7 +72,7 @@ spec:
       - name: DOCKERFILE
         value: app/todo-web/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todoweb:latest
+        value: reg.jobico.org/todoweb:$(params.repo-revision)
       - name: TLSVERIFY
         value: false
       workspaces:
@@ -91,7 +91,7 @@ spec:
       - name: release_name
         value: todo-svc
       - name: overwrite_values
-        value: "image.tag=latest"
+        value: "image.tag=$(params.repo-revision)"
       runAfter:
         - build-image-todosvc
       workspaces:
@@ -111,7 +111,7 @@ spec:
       - name: release_name
         value: todo-web
       - name: overwrite_values
-        value: "image.tag=latest"
+        value: "image.tag=$(params.repo-revision)"
       workspaces:
         - name: source  
           workspace: shared-workspace
