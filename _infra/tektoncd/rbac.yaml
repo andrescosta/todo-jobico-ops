@@ -1,12 +1,31 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: default
-  name: configmaps-admin
+  name: helm-deployer
 rules:
-- apiGroups: [""] # "" indicates the core API group
-  resources: ["configmaps"]
-  verbs: ["get", "patch", "list"]
+  - apiGroups: ["", "apps", "extensions", "batch", "networking.k8s.io"]
+    resources:
+      - pods
+      - services
+      - deployments
+      - replicasets
+      - statefulsets
+      - configmaps
+      - secrets
+      - ingresses
+      - jobs
+      - cronjobs
+      - persistentvolumeclaims
+      - persistentvolumes
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources:
+      - events
+    verbs: ["create", "delete"]
+  - apiGroups: [""]
+    resources:
+      - namespaces
+    verbs: ["get", "list"]
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -39,13 +58,14 @@ roleRef:
   name: tekton-triggers-eventlistener-clusterroles
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: configmaps-admin-binding
+  name: helm-deployer-clusterbinding
 subjects:
 - kind: ServiceAccount
   name: tekton-sa
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: configmaps-admin
+  kind: ClusterRole
+  name: helm-deployer

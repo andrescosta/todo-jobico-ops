@@ -9,7 +9,12 @@ spec:
   params:
     - name: repo-revision
       type: string
+      default: main
       description: The git revision to checkout.
+    - name: repo-revision-helm
+      type: string
+      default: main
+      description: The git helm revision to checkout.
   tasks:
     - name: fetch-repo
       taskRef:
@@ -22,6 +27,21 @@ spec:
           value: https://github.com/andrescosta/todo-jobico-cloud
         - name: revision
           value: $(params.repo-revision)
+        - name: subdirectory
+          value: app
+    - name: fetch-repo-helm
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: https://github.com/andrescosta/todo-charts
+        - name: revision
+          value: $(params.repo-revision-helm)
+        - name: subdirectory
+          value: helm
     - name: build-image-todosvc
       taskRef:
         name: buildah
@@ -29,11 +49,11 @@ spec:
         - fetch-repo
       params:
       - name: CONTEXT
-        value: todo-svc
+        value: app/todo-svc
       - name: DOCKERFILE
-        value: todo-svc/Dockerfile
+        value: app/todo-svc/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todo-svc
+        value: reg.jobico.org/todosvc:latest
       - name: TLSVERIFY
         value: false
       workspaces:
@@ -48,11 +68,11 @@ spec:
         - fetch-repo
       params:
       - name: CONTEXT
-        value: todo-web
+        value: app/todo-web
       - name: DOCKERFILE
-        value: todo-web/Dockerfile
+        value: app/todo-web/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todo-web
+        value: reg.jobico.org/todoweb:latest
       - name: TLSVERIFY
         value: false
       workspaces:
@@ -60,3 +80,38 @@ spec:
           workspace: shared-workspace
         - name: dockerconfig
           workspace: my-secret-ws
+    - name: deploy-todo-svc
+      taskRef: 
+        name: helm-upgrade-from-source
+      params:
+      - name: charts_dir
+        value: helm/charts/todo-svc-jobico
+      - name: releases_version
+        value: v1.0.0
+      - name: release_name
+        value: todo-svc
+      - name: overwrite_values
+        value: "image.tag=latest"
+      runAfter:
+        - build-image-todosvc
+      workspaces:
+        - name: source  
+          workspace: shared-workspace
+    - name: deploy-todo-web
+      taskRef: 
+        name: helm-upgrade-from-source
+      runAfter:
+        - build-image-todoweb
+        - deploy-todo-svc
+      params:
+      - name: charts_dir
+        value: helm/charts/todo-web-jobico
+      - name: releases_version
+        value: v1.0.0
+      - name: release_name
+        value: todo-web
+      - name: overwrite_values
+        value: "image.tag=latest"
+      workspaces:
+        - name: source  
+          workspace: shared-workspace
