@@ -8,7 +8,7 @@ public class TodoApplication {
 
 	
 	public static void main(String[] args) {
-        System.out.println("v47");
+        System.out.println("v48");
 		SpringApplication.run(TodoApplication.class, args);
 	}
 
