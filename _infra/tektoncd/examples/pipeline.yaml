@@ -1,13 +1,7 @@
-  apiVersion: v1
-  kind: ConfigMap
-  metadata:
-    name: commit-hash-cm
-  data: {hash:""}
----
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: build
+  name: build-monorepo-apps
 spec:
   workspaces:
     - name: shared-workspace
@@ -22,45 +16,17 @@ spec:
       default: main
       description: The git helm revision to checkout.
   tasks:
-    - name: check-git
-      taskSpec:
-        params:
-          - name: repo-revision
-            type: string
-            default: main
-            description: The git revision to checkout.
-        results:
-          - name: git-hash
-        steps:
-          - name: get-remote-hash
-            image: tfgco/kubectl
-            script: |
-              #!/bin/sh
-              last_hash=$(git ls-remote https://github.com/andrescosta/todo-jobico-cloud $(params.repo-revision) | awk '{sub(/[ \t]+$/, "", $1); print $1}')
-              current_hash=$(kubectl get configmap commit-hash-cm -o jsonpath='{.data.hash}')
-              if [ "$current_hash" != "$last_hash" ]; then
-                kubectl patch configmap commit-hash-cm -p "{\"data\":{\"hash\":\"$last_hash\"}}"
-                printf "%s" "${last_hash}" > "$(results.git-hash.path)"
-              else
-                printf "" > "$(results.git-hash.path)"
-              fi
     - name: fetch-repo
       taskRef:
         name: git-clone
       workspaces:
         - name: output
           workspace: shared-workspace
-      runAfter:
-        - check-git
-      when:
-        - input: "$(tasks.check-git.results.git-hash)"
-          operator: notin
-          values: [""]
       params:
         - name: url
           value: https://github.com/andrescosta/todo-jobico-cloud
         - name: revision
-          value: "$(tasks.check-git.results.git-hash)"
+          value: $(params.repo-revision)
         - name: subdirectory
           value: app
     - name: fetch-repo-helm
@@ -69,12 +35,6 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-      runAfter:
-        - check-git
-      when:
-        - input: "$(tasks.check-git.results.git-hash)"
-          operator: notin
-          values: [""]
       params:
         - name: url
           value: https://github.com/andrescosta/todo-charts
@@ -87,19 +47,15 @@ spec:
         name: buildah
       runAfter:
         - fetch-repo
-      when:
-        - input: "$(tasks.check-git.results.git-hash)"
-          operator: notin
-          values: [""]
       params:
       - name: CONTEXT
         value: app/todo-svc
       - name: DOCKERFILE
         value: app/todo-svc/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todosvc:$(tasks.check-git.results.git-hash)
+        value: reg.jobico.org/todosvc:$(params.repo-revision)
       - name: TLSVERIFY
-        value: "false"
+        value: false
       workspaces:
         - name: source  
           workspace: shared-workspace
@@ -110,19 +66,15 @@ spec:
         name: buildah
       runAfter:
         - fetch-repo
-      when:
-        - input: "$(tasks.check-git.results.git-hash)"
-          operator: notin
-          values: [""]
       params:
       - name: CONTEXT
         value: app/todo-web
       - name: DOCKERFILE
         value: app/todo-web/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todoweb:$(tasks.check-git.results.git-hash)
+        value: reg.jobico.org/todoweb:$(params.repo-revision)
       - name: TLSVERIFY
-        value: "false"
+        value: false
       workspaces:
         - name: source  
           workspace: shared-workspace
@@ -131,10 +83,6 @@ spec:
     - name: deploy-todo-svc
       taskRef: 
         name: helm-upgrade-from-source
-      when:
-        - input: "$(tasks.check-git.results.git-hash)"
-          operator: notin
-          values: [""]
       params:
       - name: charts_dir
         value: helm/charts/todo-svc-jobico
@@ -143,7 +91,7 @@ spec:
       - name: release_name
         value: todo-svc
       - name: overwrite_values
-        value: "image.tag=$(tasks.check-git.results.git-hash)"
+        value: "image.tag=$(params.repo-revision)"
       runAfter:
         - build-image-todosvc
       workspaces:
@@ -152,10 +100,6 @@ spec:
     - name: deploy-todo-web
       taskRef: 
         name: helm-upgrade-from-source
-      when:
-        - input: "$(tasks.check-git.results.git-hash)"
-          operator: notin
-          values: [""]
       runAfter:
         - build-image-todoweb
         - deploy-todo-svc
@@ -167,7 +111,7 @@ spec:
       - name: release_name
         value: todo-web
       - name: overwrite_values
-        value: "image.tag=$(tasks.check-git.results.git-hash)"
+        value: "image.tag=$(params.repo-revision)"
       workspaces:
         - name: source  
           workspace: shared-workspace

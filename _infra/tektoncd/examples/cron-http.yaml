@@ -3,6 +3,8 @@ kind: CronJob
 metadata:
   name: trigger-check
 spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
   schedule: "*/1 * * * *"
   jobTemplate:
     spec:

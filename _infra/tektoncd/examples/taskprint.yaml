@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: print-hash
+spec:
+  params:
+    - name: revision
+      type: string
+      description: The git revision to checkout.
+    - name: commit
+      type: string
+    - name: subdirectory
+      type: string
+  steps:
+    - name: compare-hashes
+      image: bitnami/kubectl:latest
+      script: |
+        #!/bin/sh
+        echo "start $(params.commit) ---> a"
+        echo "== $(params.revision) =="
+        echo $(params.subdirectory)

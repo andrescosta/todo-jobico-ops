@@ -1,7 +1,7 @@
   apiVersion: v1
   kind: ConfigMap
   metadata:
-    name: my-configmap
+    name: commit-hash-cm
   data: {hash:""}
 ---
 apiVersion: tekton.dev/v1beta1
@@ -25,12 +25,12 @@ spec:
       script: |
         #!/bin/sh
         
-        current_hash=$(kubectl get configmap my-configmap -o jsonpath='{.data.hash}')
+        current_hash=$(kubectl get configmap commit-hash-cm -o jsonpath='{.data.hash}')
         last_hash=$(cat /workspace/output/last-commit-hash)
         
         if [ "$current_hash" != "$last_hash" ]; then
         
-          kubectl patch configmap my-configmap -p "{\"data\":{\"hash\":\"$last_hash\"}}"
+          kubectl patch configmap commit-hash-cm -p "{\"data\":{\"hash\":\"$last_hash\"}}"
         
           kubectl create -f - <<EOF
         apiVersion: tekton.dev/v1beta1
@@ -50,9 +50,9 @@ spec:
                   resources:
                     requests:
                       storage: 1Gi
-            - name: my-secret-ws
+            - name: buildah-secret-ws
               secret:
-                secretName: my-secret
+                secretName: buildah-secret
           params:
           - name: repo-revision
             value: "$last_hash"
