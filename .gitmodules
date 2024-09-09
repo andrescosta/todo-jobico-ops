@@ -1,3 +1,0 @@
-[submodule "_infra/helm"]
-	path = _infra/helm
-	url = https://github.com/andrescosta/todo-charts
