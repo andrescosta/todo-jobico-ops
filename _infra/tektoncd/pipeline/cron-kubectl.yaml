@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: trigger-start-pipeline
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: tekton-sa
+          containers:
+          - name: curl
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl create -f - <<EOF
+              apiVersion: tekton.dev/v1beta1
+              kind: PipelineRun
+              metadata:
+                generateName: monorepo-pipeline-run-full-
+              spec:
+                serviceAccountName: tekton-sa
+                pipelineRef:
+                  name: build
+                workspaces:
+                  - name: shared-workspace
+                    volumeClaimTemplate:
+                      spec:
+                        accessModes:
+                          - ReadWriteOnce
+                        resources:
+                          requests:
+                            storage: 1Gi
+                  - name: buildah-secret-ws
+                    secret:
+                      secretName: buildah-secret
+                params:
+                  - name: repo-revision
+                    value: "main"
+              EOF
+          restartPolicy: Never

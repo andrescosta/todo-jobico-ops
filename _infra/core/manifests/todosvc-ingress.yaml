@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todosvc
+spec:
+  tls:
+    - hosts:
+        - todosvc.jobico.org
+      secretName: certs-secret
+  rules:
+    - host: todosvc.jobico.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: todosvc
+                port:
+                  number: 8080

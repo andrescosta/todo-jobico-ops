@@ -1,0 +1,61 @@
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: commit-hash-cm
+  data: {hash:""}
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: check-and-trigger-build
+spec:
+  params:
+    - name: repo-revision
+      type: string
+      description: The git revision to checkout.
+  workspaces:
+    - name: output
+  steps:
+    - name: get-remote-hash
+      image: alpine/git
+      script: |
+        git ls-remote https://github.com/andrescosta/todo-jobico-cloud $(params.repo-revision) | awk '{print $1}' > /workspace/output/last-commit-hash
+    - name: compare-hashes
+      image: bitnami/kubectl:latest
+      script: |
+        #!/bin/sh
+        
+        current_hash=$(kubectl get configmap commit-hash-cm -o jsonpath='{.data.hash}')
+        last_hash=$(cat /workspace/output/last-commit-hash)
+        
+        if [ "$current_hash" != "$last_hash" ]; then
+        
+          kubectl patch configmap commit-hash-cm -p "{\"data\":{\"hash\":\"$last_hash\"}}"
+        
+          kubectl create -f - <<EOF
+        apiVersion: tekton.dev/v1beta1
+        kind: PipelineRun
+        metadata:
+          generateName: monorepo-pipeline-run-
+        spec:
+          serviceAccountName: tekton-sa
+          pipelineRef:
+            name: build-monorepo-apps
+          workspaces:
+            - name: shared-workspace
+              volumeClaimTemplate:
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 1Gi
+            - name: buildah-secret-ws
+              secret:
+                secretName: buildah-secret
+          params:
+          - name: repo-revision
+            value: "$last_hash"
+        EOF
+        
+        fi

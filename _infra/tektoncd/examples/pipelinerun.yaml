@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: monorepo-pipeline-run-full-
+spec:
+  serviceAccountName: tekton-sa
+  pipelineRef:
+    name: build-monorepo-apps-full
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - name: buildah-secret-ws
+      secret:
+        secretName: buildah-secret
+  params:
+    - name: repo-revision
+      value: "main"

@@ -1,0 +1,117 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-monorepo-apps
+spec:
+  workspaces:
+    - name: shared-workspace
+    - name: buildah-secret-ws
+  params:
+    - name: repo-revision
+      type: string
+      default: main
+      description: The git revision to checkout.
+    - name: repo-revision-helm
+      type: string
+      default: main
+      description: The git helm revision to checkout.
+  tasks:
+    - name: fetch-repo
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: https://github.com/andrescosta/todo-jobico-cloud
+        - name: revision
+          value: $(params.repo-revision)
+        - name: subdirectory
+          value: app
+    - name: fetch-repo-helm
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: https://github.com/andrescosta/todo-charts
+        - name: revision
+          value: $(params.repo-revision-helm)
+        - name: subdirectory
+          value: helm
+    - name: build-image-todosvc
+      taskRef:
+        name: buildah
+      runAfter:
+        - fetch-repo
+      params:
+      - name: CONTEXT
+        value: app/todo-svc
+      - name: DOCKERFILE
+        value: app/todo-svc/Dockerfile
+      - name: IMAGE
+        value: reg.jobico.org/todosvc:$(params.repo-revision)
+      - name: TLSVERIFY
+        value: false
+      workspaces:
+        - name: source  
+          workspace: shared-workspace
+        - name: dockerconfig
+          workspace: buildah-secret-ws
+    - name: build-image-todoweb
+      taskRef:
+        name: buildah
+      runAfter:
+        - fetch-repo
+      params:
+      - name: CONTEXT
+        value: app/todo-web
+      - name: DOCKERFILE
+        value: app/todo-web/Dockerfile
+      - name: IMAGE
+        value: reg.jobico.org/todoweb:$(params.repo-revision)
+      - name: TLSVERIFY
+        value: false
+      workspaces:
+        - name: source  
+          workspace: shared-workspace
+        - name: dockerconfig
+          workspace: buildah-secret-ws
+    - name: deploy-todo-svc
+      taskRef: 
+        name: helm-upgrade-from-source
+      params:
+      - name: charts_dir
+        value: helm/charts/todo-svc-jobico
+      - name: releases_version
+        value: v1.0.0
+      - name: release_name
+        value: todo-svc
+      - name: overwrite_values
+        value: "image.tag=$(params.repo-revision)"
+      runAfter:
+        - build-image-todosvc
+      workspaces:
+        - name: source  
+          workspace: shared-workspace
+    - name: deploy-todo-web
+      taskRef: 
+        name: helm-upgrade-from-source
+      runAfter:
+        - build-image-todoweb
+        - deploy-todo-svc
+      params:
+      - name: charts_dir
+        value: helm/charts/todo-web-jobico
+      - name: releases_version
+        value: v1.0.0
+      - name: release_name
+        value: todo-web
+      - name: overwrite_values
+        value: "image.tag=$(params.repo-revision)"
+      workspaces:
+        - name: source  
+          workspace: shared-workspace
