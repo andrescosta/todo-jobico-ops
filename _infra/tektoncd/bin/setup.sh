@@ -7,7 +7,7 @@ json=$(echo "{
   }
 }")
 kubectl create secret generic buildah-secret --from-literal=config.json="$json"
-kubectl apply -f ../tektoncd/support/
-kubectl apply -f ../tektoncd/pipeline/
+kubectl apply -f ../support/
+kubectl apply -f ../pipeline/
 
 

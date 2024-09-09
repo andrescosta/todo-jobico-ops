@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: todosvc
+  name: todosvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todosvc
+  template:
+    metadata:
+      labels:
+        app: todosvc
+      annotations:
+        jobico-ver: "{version}"
+    spec:
+      imagePullSecrets:
+        - name: reg-cred-secret
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: devk8s
+            - name: PYROSCOPE_AGENT_ENABLED
+              value: "true"
+            - name: PYROSCOPE_APPLICATION_NAME
+              value: "todo-svc"
+            - name: PYROSCOPE_FORMAT
+              value: "jfr"
+            - name: PYROSCOPE_PROFILING_INTERVAL
+              value: "10ms"
+            - name: PYROSCOPE_PROFILER_EVENT
+              value: "itimer"
+            - name: PYROSCOPE_PROFILER_LOCK
+              value: "1"
+            - name: PYROSCOPE_PROFILER_ALLOC
+              value: "100k"
+            - name: PYROSCOPE_UPLOAD_INTERVAL
+              value: "10s"
+            - name: PYROSCOPE_LOG_LEVEL
+              value: "info"
+            - name: PYROSCOPE_LABELS
+              value: "todo-svc.jobico.org"
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: "http://pyroscope.obs.svc.cluster.local:4040"
+          image: reg.jobico.org/todosvc:latest
+          imagePullPolicy: Always
+          name: todosvc
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+              name: svc
+      restartPolicy: Always
