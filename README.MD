@@ -1,28 +1,22 @@
 # Introduction
 
-This repository contains the result of my experimentations with GitOps and CI/CD tools. 
+This repository showcases the results of my experiments with various GitOps and CI/CD tools, using a simple React TODO application with a Java backend implemented in Spring Boot. Detailed information about its architecture can be found in the accompanying document: [ARCH.md](ARCH.md).
 
-# Application
+# Stacks
 
-This is simple TODO application implemented using Spring and React, mor einformation its architecture can be found in [this document](ARCH.md).
-
-## Application Stack
+## Application 
 - **Frontend**:  React
 - **Backend**: Java 21 and Spring Boot
 - **Authentication & Authorization**: Zitadel (provided by Jobico)
 - **Database**: PostgreSQL (provided by Jobico)
 
-## Assements Stacks
+## CI/CD Assements
 
 - [Buildah](https://buildah.io/)
 - [Helm](https://helm.sh/)
 - [ArgoCD](https://argoproj.github.io/cd/)
 - [Tekton](https://tekton.dev/)
 
-
-## Deployment
-
-A detailed step by step instructions to deploy a K8s Jobico cluster and the application can be find here in [this document](LOCAL.md).
 
 # Assesments
 
