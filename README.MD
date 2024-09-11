@@ -10,7 +10,7 @@ This repository showcases the results of my experiments with various GitOps and 
 - **Authentication & Authorization**: Zitadel (provided by Jobico)
 - **Database**: PostgreSQL (provided by Jobico)
 
-## CI/CD Assements
+## CI/CD
 
 - [Buildah](https://buildah.io/)
 - [Helm](https://helm.sh/)
