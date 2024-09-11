@@ -27,7 +27,7 @@ This section covers various proofs of concept, ranging from simple local deploym
 
 ### POMCI
 
-This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh)
+This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh) and the charts in this repository: [todo-charts](https://github.com/andrescosta/todo-charts). 
  
 #### Workflow
 
