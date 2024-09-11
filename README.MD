@@ -60,8 +60,8 @@ Once the charts are uploaded to the registry, `install.sh` can be run at any tim
 
 ### POMCI
 
-This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry.
-
+This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh)
+ 
 #### Workflow
 
 ![](img/pomci.png)
@@ -69,6 +69,8 @@ This solution employs Helm for manifest templating, ArgoCD for deploying to Kube
 ### Tekton
 
 This solution is implemented as a Tekton pipeline triggered by a Kubernetes cron job. The pipeline compares the last commit hash of the repository with the one for the current deployment; if they differ, it initiates a build and deployment process using Buildah and Helm.
+
+You can find the pipeline at the following location: [_infra/tektoncd/pipeline/pipeline.yaml](_infra/tektoncd/pipeline/pipeline.yaml)
 
 #### Workflow
 
