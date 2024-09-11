@@ -49,7 +49,7 @@ This part outlines two alternatives using a local repository and Helm upgrade/in
 
 ### Charts
 
-This script deploys the charts found in the directory: [_infra/helm/todo-charts/charts/](_infra/helm/todo-charts/charts/) . Each time is called, a new version of the application will be deployed.
+This script deploys the charts found in this repository: [todo-charts](https://github.com/andrescosta/todo-charts).Each time it is called, the application will be deployed with a version based on the current epoch time.
 
 ```bash
 $ cd _infra/helm/local
@@ -58,7 +58,7 @@ $ helm list
 ```
 ### OCI
 
-In this use case, the charts are stored in the Jobico's container registry and referenced during application deployment.
+In this use case, the charts are stored in the cluster container registry and referenced during application deployment.
 
 ```bash
 $ cd _infra/helm/oci/
@@ -67,4 +67,4 @@ $ ./install.sh # It deploys the service and web app using the charts in the regi
 $ helm list
 ```
 
-Once the charts are uploaded to the registry, `install.sh` can be run at any time to deploy a new version of the application with each execution.
+Once the charts are uploaded to the registry, `install.sh` can be run at any time to deploy a new version of the application.
