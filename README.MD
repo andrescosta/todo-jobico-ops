@@ -17,12 +17,31 @@ This repository showcases the results of my experiments with various GitOps and 
 - [ArgoCD](https://argoproj.github.io/cd/)
 - [Tekton](https://tekton.dev/)
 
-
 # Assesments
 
 This section covers various assessments of use cases, ranging from simple local deployments using Helm to more complex scenarios involving ArgoCD or Tekton.
 
 ![](img/assesments.png)
+
+## GitOps
+
+### POMCI
+
+This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh)
+ 
+#### Workflow
+
+![](img/pomci.png)
+
+### Tekton
+
+This solution is implemented as a Tekton pipeline triggered by a Kubernetes cron job. The pipeline compares the last commit hash of the repository with the one for the current deployment; if they differ, it initiates a build and deployment process using Buildah and Helm.
+
+You can find the pipeline at the following location: [_infra/tektoncd/pipeline/pipeline.yaml](_infra/tektoncd/pipeline/pipeline.yaml)
+
+#### Workflow
+
+![](img/tekton.png)
 
 ## Local Deployment
 
@@ -49,23 +68,3 @@ $ helm list
 ```
 
 Once the charts are uploaded to the registry, `install.sh` can be run at any time to deploy a new version of the application with each execution.
-
-## GitOps
-
-### POMCI
-
-This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh)
- 
-#### Workflow
-
-![](img/pomci.png)
-
-### Tekton
-
-This solution is implemented as a Tekton pipeline triggered by a Kubernetes cron job. The pipeline compares the last commit hash of the repository with the one for the current deployment; if they differ, it initiates a build and deployment process using Buildah and Helm.
-
-You can find the pipeline at the following location: [_infra/tektoncd/pipeline/pipeline.yaml](_infra/tektoncd/pipeline/pipeline.yaml)
-
-#### Workflow
-
-![](img/tekton.png)
