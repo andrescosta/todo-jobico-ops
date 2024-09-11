@@ -6,11 +6,19 @@ This repository contains the result of my experimentations with GitOps and CI/CD
 
 This is simple TODO application implemented using Spring and React, mor einformation its architecture can be found in [this document](ARCH.md).
 
-## Stack
+## Application Stack
 - **Frontend**:  React
 - **Backend**: Java 21 and Spring Boot
 - **Authentication & Authorization**: Zitadel (provided by Jobico)
 - **Database**: PostgreSQL (provided by Jobico)
+
+## Assements Stacks
+
+- [Buildah](https://buildah.io/)
+- [Helm](https://helm.sh/)
+- [ArgoCD](https://argoproj.github.io/cd/)
+- [Tekton](https://tekton.dev/)
+
 
 ## Deployment
 
