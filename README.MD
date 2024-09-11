@@ -1,185 +1,67 @@
-## Introduction
+# Introduction
 
-This documentation provides detailed instructions for setting up, configuring, and deploying the TODO web app on the Jobico Cloud platform. 
+This repository contains the result of my experimentations with GitOps and CI/CD tools. 
 
-### Stack
+# Application
 
+This is simple TODO application implemented using Spring and React, mor einformation its architecture can be found in [this document](ARCH.md).
+
+## Stack
 - **Frontend**:  React
 - **Backend**: Java 21 and Spring Boot
-- **Kubernetes**: Deployment and orchestration
-- **Observability**: Grafana stack
-- **Authentication & Authorization**: Zitadel
-- **Database**: PostgreSQL
+- **Authentication & Authorization**: Zitadel (provided by Jobico)
+- **Database**: PostgreSQL (provided by Jobico)
 
-### Jobico Cloud Platform
+## Deployment
 
-Jobico Cloud is an Kubernetes distribution that includes several components pre-configured for ease of use. It allows developers to quickly deploy and manage applications without extensive setup.
+A detailed step by step instructions to deploy a K8s Jobico cluster and the application can be find here in [this document](LOCAL.md).
 
-# Getting Started
+# Assesments
 
-1. Get Todo-Jobico source code
+This section covers various assessments of use cases, ranging from simple local deployments using Helm to more complex scenarios involving ArgoCD or Tekton.
 
-```bash 
-$ git clone https://github.com/andrescosta/todo-jobico-cloud
-```
+![](img/assesments.png)
 
-2. Create the Kubernetes cluster
+## Local Deployment
 
-```bash
-$ wget https://github.com/andrescosta/jobico-cloud/archive/refs/tags/v2.5.tar.gz
-$ tar xzf v2.5.tar.gz 
-$ cd jobico-cloud-2.5/
-$ ./cluster.sh cfg # This command will generate the cloud-init config files.
-...
-$ ./cluster new --services # It will create a new K8s cluster with 1 worker node and extras.
-```
+This part outlines two alternatives using a local repository and Helm upgrade/install commands.
 
-4. Add Jobico CA locally
-```bash
-$ cd hacks
-$ ./cert_add.sh
-```
+### Charts
 
-5. Configure Split DNS
-
-You can follow any online tutorials specific to your Linux distribution for this step. Configure the domain **jobico.org** and the DNS server **192.168.122.23**.
-
-6. Create a **Service User** on Zitadel for the provisioning APIs:
-
-   1. Create the **Service User** using the Zitadel console in https://id.jobico.org/. More info: https://zitadel.com/docs/guides/manage/console/users
-   2. Assign the IAM Managers role to the user. More info: https://zitadel.com/docs/guides/manage/console/managers
-   3. Create a new KEY here: https://id.jobico.org/ui/console/users/279426608861806877?id=keys and copy the file with the generated KEY to todo-jobico-cloud/_infra/id as **key.json**
-  
-7. Setup the application
+This script deploys the charts found in the directory: [_infra/helm/todo-charts/charts/](_infra/helm/todo-charts/charts/) . Each time is called, a new version of the application will be deployed.
 
 ```bash
-$ cd todo-jobico-cloud/_infra/bin
-$ ./setup.sh # This step create the database and configure the application on Zitadel.
+$ cd _infra/helm/local
+$ ./install.sh
+$ helm list
 ```
-8. Configure the Client ID
+### OCI
 
-The output of the previous step is the Cliend ID for our app which must be configured in **todo-web/src/index.js**
-
-9. Deploy the application on Kubernetes
+In this use case, the charts are stored in the Jobico's container registry and referenced during application deployment.
 
 ```bash
-$ ./deploy.sh # From todo-jobico-cloud/_infra/bin
-```
-10. Try the App
-
-Open your browser and access to: https://todo.jobico.org
-
-12. Check the Grafana dashboards:
-
-Open your browser and access to: https://grafana.jobico.org/
-
-# Architecture
-
-## High level 
-![Alt](docs/arch-k8s.svg)
-
-## Data Model
-```mermaid
-erDiagram
-  MUser ||--o{ Activity : creates
-  Activity ||--o{ Media : associates
-  Activity ||--o{ Label_Activity : associates
-  MUser ||--o{ Label: owns
-  Label ||--o{ Label_Activity : associates
-
-  MUser {
-      bigint id PK
-      uuid public_id UK
-      text full_name
-      text mail
-      timestamptz created_at
-      timestamptz updated_at
-  }
-  Activity {
-    bigint id PK
-    uuid public_id UK
-    text name
-    text description
-    text type
-    text status
-    text state
-    text[] tags
-    jsonb extra_data
-    bigint muser_id FK
-    timestamptz created_at
-    timestamptz updated_at
-  }
-  
-  Label {
-    bigint id PK
-    uuid public_id UK
-    text name
-    text description
-    bigint muser_id FK
-    timestamptz created_at
-    timestamptz updated_at
-  }
-
-  Media {
-    bigint id PK
-    uuid public_id UK
-    bigint activity_id FK
-    text name
-    text type
-    text uri
-    text description
-    json extra_data
-    timestamptz created_at
-    timestamptz updated_at
-  }
-  Label_Activity {
-    bigint id PK
-    bigint label_id FK
-    bigint activity_id FK
-    timestamptz created_at
-    timestamptz updated_at
-  }
+$ cd _infra/helm/oci/
+$ ./pkg.sh # It pushes the charts to the container registry.
+$ ./install.sh # It deploys the service and web app using the charts in the registry
+$ helm list
 ```
 
+Once the charts are uploaded to the registry, `install.sh` can be run at any time to deploy a new version of the application with each execution.
 
-# Stack
+## GitOps
 
-## Activity Service
-* Java 19
-* Go (Improver job service)
-* Spring Boot
-* Spring RestDocs
-* Micrometer
-* Zipkin
-* Loki4j
-* Pyroscope
-* Slf4j 
-* Maven
-* GSon
-* JJWT
+### POMCI
 
+This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry.
 
-## Identity Management
-* Zitadel (SSO)
-  * OpenID Connect
+#### Workflow
 
-## Database
-* Postgress
+![](img/pomci.png)
 
-## API Documentation
-* Asciidoctor
+### Tekton
 
-## Infra
-* Jobico Cloud
+This solution is implemented as a Tekton pipeline triggered by a Kubernetes cron job. The pipeline compares the last commit hash of the repository with the one for the current deployment; if they differ, it initiates a build and deployment process using Buildah and Helm.
 
-## Testing
-* Junit 5 (Unit)
-* TestContainers (Integration) 
-* Gatling (Performance)
+#### Workflow
 
-## Web Client
-* React
-* W3.CSS
-* Babel
-* Webpack
-* Axios
+![](img/tekton.png)
