@@ -17,9 +17,9 @@ This repository showcases the results of my experiments with various GitOps and 
 - [ArgoCD](https://argoproj.github.io/cd/)
 - [Tekton](https://tekton.dev/)
 
-# Assesments
+# Experiments
 
-This section covers various assessments of use cases, ranging from simple local deployments using Helm to more complex scenarios involving ArgoCD or Tekton.
+This section covers various proofs of concept, ranging from simple local deployments using Helm to more complex scenarios involving ArgoCD or Tekton.
 
 ![](img/assesments.png)
 
