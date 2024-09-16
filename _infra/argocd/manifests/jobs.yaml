@@ -37,14 +37,14 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-svc
-          image: reg.jobico.org/buildah 
+          image: reg.jobico.local/buildah 
           command: 
           - /script/build.sh  
           - init
           - --repository=https://github.com/andrescosta/todo-jobico-cloud
           - --branch=argocd-helm
           - --build-dir=todo-svc/
-          - --registry=reg.jobico.org
+          - --registry=reg.jobico.local
           - --image-name=todosvc
           - --current-version=1.1
           - --work-dir=/repo
@@ -67,7 +67,7 @@ spec:
             mountPath: /token
       containers:
         - name: svc-builder 
-          image: reg.jobico.org/buildah 
+          image: reg.jobico.local/buildah 
           securityContext:
             privileged: true
           command: 
@@ -78,7 +78,7 @@ spec:
             - name: builder-vol
               mountPath: "/repo"
             - name: ca
-              mountPath: "/etc/containers/certs.d/reg.jobico.org"
+              mountPath: "/etc/containers/certs.d/reg.jobico.local"
             - name: github-token
               mountPath: /token
       volumes:
@@ -112,14 +112,14 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-web
-          image: reg.jobico.org/buildah 
+          image: reg.jobico.local/buildah 
           command: 
           - /script/build.sh
           - init
           - --repository=https://github.com/andrescosta/todo-jobico-cloud
           - --branch=argocd-helm
           - --build-dir=todo-web/
-          - --registry=reg.jobico.org
+          - --registry=reg.jobico.local
           - --image-name=todoweb
           - --current-version=1.1
           - --work-dir=/repo
@@ -142,7 +142,7 @@ spec:
               mountPath: /token
       containers:
         - name: web-builder 
-          image: reg.jobico.org/buildah 
+          image: reg.jobico.local/buildah 
           securityContext:
             privileged: true
           command: 
@@ -153,7 +153,7 @@ spec:
             - name: builder-vol
               mountPath: "/repo"
             - name: ca
-              mountPath: "/etc/containers/certs.d/reg.jobico.org"
+              mountPath: "/etc/containers/certs.d/reg.jobico.local"
             - name: github-token
               mountPath: /token
       volumes:

@@ -1,6 +1,6 @@
 POSTGRES_DB=postgres
 POSTGRES_USER=postgres
-POSTGRES_SRV=db.jobico.org
+POSTGRES_SRV=db.jobico.local
 export PGPASSWORD=postgres
 APP_DB_PASS=todo
 APP_DB_USER=todo

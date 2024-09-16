@@ -97,7 +97,7 @@ spec:
       - name: DOCKERFILE
         value: app/todo-svc/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todosvc:$(tasks.check-git.results.git-hash)
+        value: reg.jobico.local/todosvc:$(tasks.check-git.results.git-hash)
       - name: TLSVERIFY
         value: "false"
       workspaces:
@@ -120,7 +120,7 @@ spec:
       - name: DOCKERFILE
         value: app/todo-web/Dockerfile
       - name: IMAGE
-        value: reg.jobico.org/todoweb:$(tasks.check-git.results.git-hash)
+        value: reg.jobico.local/todoweb:$(tasks.check-git.results.git-hash)
       - name: TLSVERIFY
         value: "false"
       workspaces:

@@ -25,13 +25,13 @@ $ ./cert_add.sh
 
 5. Configure Split DNS
 
-You can follow any online tutorials specific to your Linux distribution for this step. Configure the domain **jobico.org** and the DNS server **192.168.122.23**.
+You can follow any online tutorials specific to your Linux distribution for this step. Configure the domain **jobico.local** and the DNS server **192.168.122.23**.
 
 6. Create a **Service User** on Zitadel for the provisioning APIs:
 
-   1. Create the **Service User** using the Zitadel console in https://id.jobico.org/. More info: https://zitadel.com/docs/guides/manage/console/users
+   1. Create the **Service User** using the Zitadel console in https://id.jobico.local/. More info: https://zitadel.com/docs/guides/manage/console/users
    2. Assign the IAM Managers role to the user. More info: https://zitadel.com/docs/guides/manage/console/managers
-   3. Create a new KEY here: https://id.jobico.org/ui/console/users/279426608861806877?id=keys and copy the file with the generated KEY to todo-jobico-cloud/_infra/id as **key.json**
+   3. Create a new KEY here: https://id.jobico.local/ui/console/users/279426608861806877?id=keys and copy the file with the generated KEY to todo-jobico-cloud/_infra/id as **key.json**
   
 7. Setup the application
 
@@ -50,8 +50,8 @@ $ ./deploy.sh # From todo-jobico-cloud/_infra/bin
 ```
 10. Try the App
 
-Open your browser and access to: https://todo.jobico.org
+Open your browser and access to: https://todo.jobico.local
 
 12. Check the Grafana dashboards:
 
-Open your browser and access to: https://grafana.jobico.org/
+Open your browser and access to: https://grafana.jobico.local/

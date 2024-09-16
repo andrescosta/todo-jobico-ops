@@ -12,7 +12,7 @@ HELP.md
 tempo-data
 *.bkp
 *.private
-_infra/manifests/deploy.yaml
+_infra/core/manifests/deploy.yaml
 ### STS ###
 .apt_generated
 .classpath
@@ -21,22 +21,6 @@ _infra/manifests/deploy.yaml
 .settings
 .springBeans
 .sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
