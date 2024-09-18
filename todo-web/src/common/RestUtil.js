@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const svc = "https://todosvc.jobico.org/";
+const svc = "https://todosvc.jobico.local/";
 
 export async function get({ api, pathParams, queryParams }) {
   try {

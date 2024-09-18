@@ -2,11 +2,11 @@ key_path=../id/key.json
 
 go install github.com/zitadel/zitadel-tools@latest
 
-assertion=$(zitadel-tools key2jwt --audience https://id.jobico.org --key $key_path)
+assertion=$(zitadel-tools key2jwt --audience https://id.jobico.local --key $key_path)
 data_assertion="assertion=$assertion"
 
 token_response=$(curl -s --request POST \
-    --url https://id.jobico.org/oauth/v2/token \
+    --url https://id.jobico.local/oauth/v2/token \
     --header 'Content-Type: application/x-www-form-urlencoded'  \
     --data grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer \
     --data scope='openid profile urn:zitadel:iam:org:project:id:zitadel:aud' \
@@ -15,7 +15,7 @@ token_response=$(curl -s --request POST \
 access_token=$(echo "$token_response" | jq -r '.access_token')
 header_bearer="Bearer $access_token"
 
-json_response=$(curl -s -L 'https://id.jobico.org/management/v1/projects' \
+json_response=$(curl -s -L 'https://id.jobico.local/management/v1/projects' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
 -H "Authorization: $header_bearer" \
@@ -24,7 +24,7 @@ json_response=$(curl -s -L 'https://id.jobico.org/management/v1/projects' \
 }')
 
 proj_id=$(echo "$json_response" | jq -r '.id')
-url="https://id.jobico.org/management/v1/projects/$proj_id/apps/oidc"
+url="https://id.jobico.local/management/v1/projects/$proj_id/apps/oidc"
 
 json_response=$(curl -s -L "$url" \
 -H 'Content-Type: application/json' \
@@ -36,8 +36,8 @@ json_response=$(curl -s -L "$url" \
         "http://localhost:3000/callback",
         "http://localhost:3000",
         "http://localhost:3000/",
-        "https://todo.jobico.org/",
-        "https://todo.jobico.org"
+        "https://todo.jobico.local/",
+        "https://todo.jobico.local"
     ],
     "responseTypes": [
         "OIDC_RESPONSE_TYPE_CODE"
@@ -50,9 +50,9 @@ json_response=$(curl -s -L "$url" \
     "postLogoutRedirectUris": [
         "http://localhost:3000",
         "http://localhost:3000/",
-        "https://id.jobico.org",
-        "https://todo.jobico.org/",
-        "https://todo.jobico.org"
+        "https://id.jobico.local",
+        "https://todo.jobico.local/",
+        "https://todo.jobico.local"
     ],
     "devMode": true,
     "accessTokenRoleAssertion": true,
@@ -63,7 +63,7 @@ json_response=$(curl -s -L "$url" \
 clientId=$(echo "$json_response" | jq '.clientId')
 echo "The Client Id is: $clientId"
 
-json_response=$(curl -s -L 'https://id.jobico.org/management/v1/actions' \
+json_response=$(curl -s -L 'https://id.jobico.local/management/v1/actions' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
 -H "Authorization: $header_bearer" \
@@ -76,7 +76,7 @@ json_response=$(curl -s -L 'https://id.jobico.org/management/v1/actions' \
 
 id=$(echo "$json_response" | jq -r '.id')
 json_payload="{\"actionIds\": [\"$id\"]}"
-json_response=$(curl -s -L 'https://id.jobico.org/management/v1/flows/3/trigger/2' \
+json_response=$(curl -s -L 'https://id.jobico.local/management/v1/flows/3/trigger/2' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
 -H "Authorization: $header_bearer" \

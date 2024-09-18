@@ -1,6 +1,6 @@
 # Introduction
 
-This repository showcases the results of my experiments with various GitOps and CI/CD tools, using a simple React TODO application with a Java backend implemented in Spring Boot. Detailed information about its architecture can be found in the accompanying document: [ARCH.md](ARCH.md).
+This repository contains several my experiments with various GitOps and CI/CD tools, using a React TODO application with a Java backend implemented in Spring Boot. Information about its architecture can be found in: [ARCH.md](ARCH.md).
 
 # Stacks
 
@@ -10,7 +10,7 @@ This repository showcases the results of my experiments with various GitOps and 
 - **Authentication & Authorization**: Zitadel (provided by Jobico)
 - **Database**: PostgreSQL (provided by Jobico)
 
-## CI/CD
+## CI/CD stacks
 
 - [Buildah](https://buildah.io/)
 - [Helm](https://helm.sh/)
@@ -19,7 +19,7 @@ This repository showcases the results of my experiments with various GitOps and 
 
 # Experiments
 
-This section covers various proofs of concept, ranging from simple local deployments using Helm to more complex scenarios involving ArgoCD or Tekton.
+This section covers various proofs of concept, ranging from local deployments using Helm to scenarios involving ArgoCD or Tekton.
 
 ![](img/assesments.png)
 
@@ -27,7 +27,7 @@ This section covers various proofs of concept, ranging from simple local deploym
 
 ### POMCI
 
-This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub as the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh) and the charts in this repository: [todo-charts](https://github.com/andrescosta/todo-charts). 
+This solution employs Helm for manifest templating, ArgoCD for deploying to Kubernetes, GitHub for the charts repository, and POMCI (a custom shell script) for monitoring changes, building container images with Buildah, and pushing them to the registry. The POMCI script can be found at this location: [_infra/argocd/pomci/build.sh](_infra/argocd/pomci/build.sh) and the charts in this repository: [todo-charts](https://github.com/andrescosta/todo-charts). 
  
 #### Workflow
 

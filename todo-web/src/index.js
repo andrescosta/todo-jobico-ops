@@ -15,13 +15,13 @@ const onSigninCallback = (_user) => {
 }
 
 const oidcConfig = {
-  authority: "https://id.jobico.org/",
-  client_id: "283625149377348181",
-  redirect_uri: "https://todo.jobico.org",
+  authority: "https://id.jobico.local/",
+  client_id: "285213500224110620",
+  redirect_uri: "https://todo.jobico.local",
   onSigninCallback,
   scope: "openid email urn:zitadel:iam:user:metadata",
   userStore: new WebStorageStateStore({ store: window.localStorage }),
-  post_logout_redirect_uri: 'https://todo.jobico.org',
+  post_logout_redirect_uri: 'https://todo.jobico.local',
 
 };
 

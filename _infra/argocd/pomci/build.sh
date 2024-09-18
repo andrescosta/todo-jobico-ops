@@ -149,7 +149,7 @@ EOF
                 patch_version=$(git rev-list HEAD --count --no-merges)
                 ((patch_version=patch_version+1))
                 push_version="$version.$patch_version"
-                buildah login --username jobico --password jobico123 https://reg.jobico.org
+                buildah login --username jobico --password jobico123 https://reg.jobico.local
                 buildah build --format=docker -t $image:$push_version $build_dir
                 buildah push $image:$push_version
 

@@ -37,10 +37,10 @@ module.exports = {
         port: 3000,
         allowedHosts: [
             'todoweb',
-            'todo.jobico.org'
+            'todo.jobico.local'
         ],
         devMiddleware: {
-            publicPath: "https://todo.jobico.org/dist/"
+            publicPath: "https://todo.jobico.local/dist/"
         },
         hot: false,
         liveReload: false
